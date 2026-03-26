@@ -8,6 +8,12 @@ authors = [
     { name = "Moses Wynn", email = "accounts@moseswynn.com" }
 ]
 requires-python = ">=3.10"
+
+[project.urls]
+Homepage = "https://github.com/moseswynn/spagents"
+Repository = "https://github.com/moseswynn/spagents"
+Issues = "https://github.com/moseswynn/spagents/issues"
+License = "https://github.com/moseswynn/spagents/blob/main/LICENSE.md"
 dependencies = [
     "playwright>=1.40",
     "pydantic>=2.0",
