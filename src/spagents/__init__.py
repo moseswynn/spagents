@@ -1,6 +1,6 @@
 """spagents — SPA-aware browsing library for AI agents."""
 
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 from spagents.browser.manager import BrowserManager
 from spagents.browser.page import SPAPage
