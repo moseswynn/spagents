@@ -1,0 +1,33 @@
+[project]
+name = "spagents"
+version = "0.1.0"
+description = "SPA-aware browsing library for AI agents"
+readme = "README.md"
+license = { file = "LICENSE.md" }
+authors = [
+    { name = "Moses Wynn", email = "accounts@moseswynn.com" }
+]
+requires-python = ">=3.10"
+dependencies = [
+    "playwright>=1.40",
+    "pydantic>=2.0",
+    "typer>=0.9",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "fastmcp>=2.0",
+]
+
+[project.scripts]
+spagents = "spagents.cli.main:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.4",
+    "mypy>=1.10",
+]
