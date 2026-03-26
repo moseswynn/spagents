@@ -140,6 +140,27 @@ Add to your Claude Desktop config (`claude_desktop_config.json`):
 }
 ```
 
+#### Claude Code
+
+Add the MCP server to your project or user settings:
+
+```bash
+claude mcp add spagents -- spagents mcp
+```
+
+Or add it directly to your `.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "spagents": {
+      "command": "spagents",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
 Now Claude can browse any SPA:
 
 > **You:** "What's the top story on Kagi News today?"
