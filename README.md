@@ -18,34 +18,12 @@
 
 **spagents** fixes this. It launches a real browser, intelligently waits for SPAs to finish rendering, and returns structured, agent-friendly data — articles, actions, inputs, navigation — ready for your agent to use.
 
-### The problem
+### How Claude handles dynamic content before spagents
 
-```
-# What fetch/requests sees on a SPA:
-<div id="app"></div>
-<script src="bundle.js"></script>
-```
+![Claude sends error message that dynamic content can't be loaded.](img/before-spagents.png)
 
-### The spagents solution
-
-```bash
-$ spagents browse "https://news.kagi.com" --format text
-
-Title: World | Kagi News
-Content Ready: True
-
-=== 12 Articles ===
-  MIDDLE EAST: Update: Iran rejects US truce plan, sets terms
-  TECH ACCOUNTABILITY: US jury holds Meta, YouTube liable in addiction case
-  ARCHAEOLOGY: Possible d'Artagnan remains found beneath Maastricht church
-  ...
-
-=== 45 Actions ===
-  [1] (navigate) Listitem: Technology
-  [2] (click)    Button: Expand story (Iran rejects US truce plan...)
-  [3] (input)    Input: Search
-  ...
-```
+### How Claude handles dynamic content after spagents
+![Claude successfully retrieves the dynamic content](img/after-spagents.png)
 
 ### Key features
 
