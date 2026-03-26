@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Test SPA for spagents unit tests">
+    <meta property="og:title" content="Test SPA">
+    <meta property="og:description" content="A test single-page application">
+    <title>Test SPA</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        nav { margin-bottom: 20px; }
+        nav a { margin-right: 10px; cursor: pointer; }
+        .loading { display: none; }
+        .loading.active { display: block; }
+        .hidden { display: none; }
+        article { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+        .accordion-content { display: none; }
+        .accordion-content.open { display: block; }
+        .counter { padding: 10px; margin: 10px 0; }
+        input, select, textarea { display: block; margin: 5px 0; padding: 5px; }
+        button { padding: 5px 10px; margin: 5px; cursor: pointer; }
+        [role="tab"] { padding: 5px 10px; cursor: pointer; display: inline-block; }
+        [role="tab"].active { font-weight: bold; border-bottom: 2px solid blue; }
+        .tab-panel { padding: 10px; border: 1px solid #eee; }
+        .tab-panel.hidden { display: none; }
+        .clickable-div { cursor: pointer; padding: 5px; color: blue; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Test SPA</h1>
+        <nav aria-label="Main navigation">
+            <a href="#home" id="nav-home">Home</a>
+            <a href="#articles" id="nav-articles">Articles</a>
+            <a href="#form" id="nav-form">Form</a>
+            <a href="#delayed" id="nav-delayed">Delayed</a>
+        </nav>
+    </header>
+
+    <main id="app">
+        <!-- Content injected by JS to simulate SPA behavior -->
+    </main>
+
+    <footer>
+        <p>Test SPA Footer</p>
+        <a href="https://example.com/about">About</a>
+        <a href="https://example.com/contact">Contact</a>
+    </footer>
+
+    <script>
+        const app = document.getElementById('app');
+
+        // =============================================
+        // Client-side router (hash-based)
+        // =============================================
+
+        const routes = {
+            home: renderHome,
+            articles: renderArticles,
+            form: renderForm,
+            delayed: renderDelayed,
+        };
+
+        function navigate() {
+            const hash = window.location.hash.slice(1) || 'home';
+            const render = routes[hash] || renderHome;
+            app.innerHTML = '';
+            render();
+        }
+
+        window.addEventListener('hashchange', navigate);
+
+        // =============================================
+        // Home page — buttons, counter, tabs, clickable divs
+        // =============================================
+
+        function renderHome() {
+            app.innerHTML = `
+                <h2>Welcome Home</h2>
+                <p>This is the home page of the test SPA. It contains various interactive elements for testing action discovery and content extraction.</p>
+                <p>The test SPA simulates common SPA patterns: client-side routing, delayed content loading, expandable sections, forms, and diverse interactive elements.</p>
+
+                <section aria-label="Counter">
+                    <div class="counter">
+                        <span id="count">Count: 0</span>
+                        <button id="increment-btn">Increment</button>
+                        <button id="decrement-btn">Decrement</button>
+                        <button id="reset-btn" aria-label="Reset counter">Reset</button>
+                    </div>
+                </section>
+
+                <section aria-label="Tabs">
+                    <div role="tablist">
+                        <div role="tab" id="tab-one" class="active" tabindex="0">Tab One</div>
+                        <div role="tab" id="tab-two" tabindex="0">Tab Two</div>
+                        <div role="tab" id="tab-three" tabindex="0">Tab Three</div>
+                    </div>
+                    <div id="panel-one" class="tab-panel" role="tabpanel">Content for tab one. This panel has some detailed information.</div>
+                    <div id="panel-two" class="tab-panel hidden" role="tabpanel">Content for tab two. Different content here.</div>
+                    <div id="panel-three" class="tab-panel hidden" role="tabpanel">Content for tab three. Even more content.</div>
+                </section>
+
+                <section aria-label="Interactive elements">
+                    <div class="clickable-div" tabindex="0" title="Click me">A clickable div element</div>
+                    <div class="clickable-div" onclick="alert('clicked')" title="Another clickable">Another clickable div</div>
+                    <details>
+                        <summary>Expandable details</summary>
+                        <p>Hidden content that appears when expanded.</p>
+                    </details>
+                </section>
+
+                <section aria-label="Links">
+                    <h3>Useful Links</h3>
+                    <a href="https://example.com/docs">Documentation</a>
+                    <a href="https://example.com/api">API Reference</a>
+                </section>
+            `;
+
+            // Counter logic
+            let count = 0;
+            const countEl = document.getElementById('count');
+            document.getElementById('increment-btn').addEventListener('click', () => {
+                count++;
+                countEl.textContent = 'Count: ' + count;
+            });
+            document.getElementById('decrement-btn').addEventListener('click', () => {
+                count--;
+                countEl.textContent = 'Count: ' + count;
+            });
+            document.getElementById('reset-btn').addEventListener('click', () => {
+                count = 0;
+                countEl.textContent = 'Count: ' + count;
+            });
+
+            // Tab logic
+            const tabs = document.querySelectorAll('[role="tab"]');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+                    const panelId = 'panel-' + tab.textContent.trim().split(' ')[1].toLowerCase();
+                    document.getElementById(panelId).classList.remove('hidden');
+                });
+            });
+        }
+
+        // =============================================
+        // Articles page — collapsed/expanded articles
+        // =============================================
+
+        function renderArticles() {
+            app.innerHTML = `
+                <h2>Articles</h2>
+
+                <article id="article-1">
+                    <button class="accordion-toggle" data-target="article-1-content">Breaking Discovery in Science</button>
+                    <p>Scientists have made a groundbreaking discovery that could change our understanding of the natural world.</p>
+                    <a href="https://example.com/science-story">Read more</a>
+                    <div id="article-1-content" class="accordion-content">
+                        <h3>Sources</h3>
+                        <a href="https://example.com/source1" aria-label="1 article from ScienceDaily">ScienceDaily 2h</a>
+                        <a href="https://example.com/source2" aria-label="3 articles from Nature">Nature 5h</a>
+
+                        <h3>Highlights</h3>
+                        <h4>Key Finding</h4>
+                        <p>The research team identified a novel mechanism that explains previously unexplained phenomena in quantum physics.</p>
+                        <h4>Methodology</h4>
+                        <p>Using advanced particle accelerators, the team was able to observe interactions at unprecedented energy levels.</p>
+
+                        <h3>Perspectives</h3>
+                        <p>Dr. Smith</p>
+                        <p>This is a paradigm shift in our understanding.</p>
+                        <p>Prof. Jones</p>
+                        <p>While promising, we need independent replication.</p>
+
+                        <blockquote>This discovery will redefine physics textbooks for generations to come.</blockquote>
+
+                        <h3>Timeline</h3>
+                        <p>2020: Initial observations. 2022: Hypothesis formed. 2024: Experimental confirmation.</p>
+                    </div>
+                </article>
+
+                <article id="article-2">
+                    <button class="accordion-toggle" data-target="article-2-content">Tech Industry Update</button>
+                    <p>Major technology companies announce new open-source initiatives to improve developer tooling.</p>
+                    <a href="https://example.com/tech-story">Read more</a>
+                    <div id="article-2-content" class="accordion-content"></div>
+                </article>
+
+                <article id="article-3">
+                    <h2>TECHNOLOGY</h2>
+                    <button class="accordion-toggle" data-target="article-3-content">Climate Research Breakthrough</button>
+                    <p>New climate models show more accurate predictions using machine learning techniques applied to decades of satellite data and ground measurements.</p>
+                    <a href="https://example.com/climate-story">Read more</a>
+                    <div id="article-3-content" class="accordion-content"></div>
+                </article>
+            `;
+
+            // Accordion logic
+            document.querySelectorAll('.accordion-toggle').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        target.classList.toggle('open');
+                    }
+                });
+            });
+        }
+
+        // =============================================
+        // Form page — inputs, selects, textareas
+        // =============================================
+
+        function renderForm() {
+            app.innerHTML = `
+                <h2>Contact Form</h2>
+                <form id="test-form">
+                    <fieldset>
+                        <legend>Personal Information</legend>
+                        <label for="name-input">Name</label>
+                        <input type="text" id="name-input" placeholder="Enter your name" data-testid="name-field">
+
+                        <label for="email-input">Email</label>
+                        <input type="email" id="email-input" placeholder="Enter your email" data-testid="email-field">
+
+                        <label for="password-input">Password</label>
+                        <input type="password" id="password-input" placeholder="Enter password">
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Preferences</legend>
+                        <label for="category-select">Category</label>
+                        <select id="category-select">
+                            <option value="">Choose...</option>
+                            <option value="general">General</option>
+                            <option value="support">Support</option>
+                            <option value="feedback">Feedback</option>
+                        </select>
+
+                        <label for="message-textarea">Message</label>
+                        <textarea id="message-textarea" placeholder="Type your message" rows="4"></textarea>
+
+                        <label>
+                            <input type="checkbox" id="agree-checkbox"> I agree to the terms
+                        </label>
+                    </fieldset>
+
+                    <button type="submit" id="submit-btn">Submit</button>
+                    <button type="button" id="clear-btn">Clear Form</button>
+                    <div id="form-result" class="hidden"></div>
+                </form>
+            `;
+
+            document.getElementById('test-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const result = document.getElementById('form-result');
+                const name = document.getElementById('name-input').value;
+                result.textContent = 'Submitted: ' + name;
+                result.classList.remove('hidden');
+            });
+
+            document.getElementById('clear-btn').addEventListener('click', () => {
+                document.getElementById('test-form').reset();
+                document.getElementById('form-result').classList.add('hidden');
+            });
+        }
+
+        // =============================================
+        // Delayed page — simulates async content loading
+        // =============================================
+
+        function renderDelayed() {
+            app.innerHTML = `
+                <h2>Delayed Content</h2>
+                <div class="loading active" aria-busy="true">
+                    <div class="spinner">Loading content...</div>
+                </div>
+                <div id="delayed-content" class="hidden"></div>
+            `;
+
+            // Simulate API call with 500ms delay
+            setTimeout(() => {
+                const loader = document.querySelector('.loading');
+                loader.remove();
+
+                const content = document.getElementById('delayed-content');
+                content.classList.remove('hidden');
+                content.innerHTML = `
+                    <p>This content was loaded after a simulated API call. It demonstrates that spagents can wait for dynamically loaded content before extracting.</p>
+                    <p>The content ready detector should pick up that the loading spinner has disappeared and meaningful text is now present on the page.</p>
+
+                    <article>
+                        <h3>Async Article</h3>
+                        <p>This article appeared after the delayed load completed. It tests extraction of dynamically injected content.</p>
+                        <a href="https://example.com/async-article">Read full article</a>
+                    </article>
+
+                    <section aria-label="Dynamic actions">
+                        <button id="dynamic-btn">Dynamic Button</button>
+                        <input type="text" id="dynamic-input" placeholder="Dynamic input field">
+                    </section>
+                `;
+            }, 500);
+        }
+
+        // =============================================
+        // Initial render
+        // =============================================
+        navigate();
+    </script>
+</body>
+</html>
